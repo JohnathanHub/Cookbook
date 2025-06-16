@@ -42,20 +42,15 @@ class EditItemViewModel(private val repository: ItemRepository) : ViewModel() {
         _itemId.value = itemId
         _isLoadingItem.value = true
         viewModelScope.launch {
-            try {
-                val item = repository.getItemById(itemId)
-                item?.let {
-                    _igLink.value = it.igLink
-                    _imageUri.value = Uri.parse(it.imageUrl)
-                    _recipeName.value = it.recipeName
-                    _recipeIngredients.value = it.recipeIngredients
-                    _recipeSteps.value = it.recipeSteps
-                }
-            } catch (e: Exception) {
-                // Handle error if needed
-            } finally {
-                _isLoadingItem.value = false
+            val item = repository.getItemById(itemId)
+            item?.let {
+                _igLink.value = it.igLink
+                _imageUri.value = Uri.parse(it.imageUrl)
+                _recipeName.value = it.recipeName
+                _recipeIngredients.value = it.recipeIngredients
+                _recipeSteps.value = it.recipeSteps
             }
+            _isLoadingItem.value = false
         }
     }
 
@@ -83,7 +78,6 @@ class EditItemViewModel(private val repository: ItemRepository) : ViewModel() {
         if (canUpdateItem()) {
             _isLoading.value = true
             viewModelScope.launch {
-                try {
                     val updatedItem = ItemEntity(
                         id = _itemId.value,
                         igLink = _igLink.value,
@@ -94,11 +88,7 @@ class EditItemViewModel(private val repository: ItemRepository) : ViewModel() {
                     )
                     repository.updateItem(updatedItem)
                     _updateSuccess.value = true
-                } catch (e: Exception) {
-                    // Handle error if needed
-                } finally {
-                    _isLoading.value = false
-                }
+                _isLoading.value = false
             }
         }
     }

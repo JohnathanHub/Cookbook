@@ -67,20 +67,12 @@ fun ItemsListScreen(
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary
             )
-
+            // spinner (in case of a massive roomdb)
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
                     strokeWidth = 2.dp
                 )
-            } else {
-                IconButton(onClick = { viewModel.refreshItems() }) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Refresh",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
             }
         }
 
@@ -113,7 +105,7 @@ fun ItemsListScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Search help text
+        // Search tutorial
         if (searchQuery.isEmpty()) {
             Text(
                 text = "normal search = searches by both name and ingredients, n:\"search\" searches by name, i:\"search\" searches by ingredients",
@@ -131,7 +123,7 @@ fun ItemsListScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
+        // fallback for empty list
         if (filteredItems.isEmpty() && !isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -191,7 +183,7 @@ fun RecipeCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Show image from URI
+            // Load image
             item.imageUrl.let { uriString ->
                 val uri = uriString.toUri()
 
@@ -207,7 +199,7 @@ fun RecipeCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Show a preview of ingredients if they match the search
+            // Show matching recipes
             if (searchQuery.isNotEmpty() && item.recipeIngredients.isNotBlank()) {
                 Text(
                     text = "Ingredients: ${item.recipeIngredients.take(100)}${if (item.recipeIngredients.length > 100) "..." else ""}",
@@ -218,8 +210,6 @@ fun RecipeCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
             }
-
-            // Add a visual indicator that the card is clickable
             Text(
                 text = "Tap to view full recipe",
                 style = MaterialTheme.typography.bodySmall,

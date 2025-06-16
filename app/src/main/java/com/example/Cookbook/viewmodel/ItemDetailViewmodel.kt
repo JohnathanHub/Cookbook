@@ -25,7 +25,6 @@ class ItemDetailViewModel(private val repository: ItemRepository) : ViewModel() 
             try {
                 _item.value = repository.getItemById(itemId)
             } catch (e: Exception) {
-                // Handle error if needed
                 _item.value = null
             } finally {
                 _isLoading.value = false
@@ -36,12 +35,8 @@ class ItemDetailViewModel(private val repository: ItemRepository) : ViewModel() 
     fun deleteItem() {
         _item.value?.let { currentItem ->
             viewModelScope.launch {
-                try {
-                    repository.deleteItemById(currentItem.id)
-                    _deleteSuccess.value = true
-                } catch (e: Exception) {
-                    // Handle error if needed
-                }
+                repository.deleteItemById(currentItem.id)
+                _deleteSuccess.value = true
             }
         }
     }

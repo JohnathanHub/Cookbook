@@ -56,28 +56,23 @@ class AddItemViewModel(private val repository: ItemRepository) : ViewModel() {
         if (canAddItem()) {
             _isLoading.value = true
             viewModelScope.launch {
-                try {
-                    val item = ItemEntity(
-                        igLink = _igLink.value,
-                        imageUrl = _imageUri.value.toString(),
-                        recipeName = _recipeName.value,
-                        recipeIngredients = _recipeIngredients.value,
-                        recipeSteps = _recipeSteps.value
-                    )
-                    repository.insertItem(item)
+                val item = ItemEntity(
+                    igLink = _igLink.value,
+                    imageUrl = _imageUri.value.toString(),
+                    recipeName = _recipeName.value,
+                    recipeIngredients = _recipeIngredients.value,
+                    recipeSteps = _recipeSteps.value
+                )
+                repository.insertItem(item)
 
-                    // Reset form after successful insertion
-                    _igLink.value = ""
-                    _imageUri.value = null
-                    _recipeName.value = ""
-                    _recipeIngredients.value = ""
-                    _recipeSteps.value = ""
-                    _addItemSuccess.value = true
-                } catch (e: Exception) {
-                    // Handle error if needed
-                } finally {
-                    _isLoading.value = false
-                }
+                // clear addition screen after adding
+                _igLink.value = ""
+                _imageUri.value = null
+                _recipeName.value = ""
+                _recipeIngredients.value = ""
+                _recipeSteps.value = ""
+                _addItemSuccess.value = true
+                _isLoading.value = false
             }
         }
     }

@@ -42,12 +42,11 @@ fun ItemDetailScreen(
     val isLoading by viewModel.isLoading
     val deleteSuccess by viewModel.deleteSuccess
 
-    // Load item when screen is first opened
     LaunchedEffect(itemId) {
         viewModel.loadItem(itemId)
     }
 
-    // Navigate back when delete is successful
+    // go back on delete
     LaunchedEffect(deleteSuccess) {
         if (deleteSuccess) {
             viewModel.resetDeleteSuccess()
@@ -55,10 +54,10 @@ fun ItemDetailScreen(
         }
     }
 
-    // Function to convert Instagram URL to embed URL
+    // make urls for embeds
     fun getInstagramEmbedUrl(igLink: String): String? {
         return try {
-            // Extract post ID from various Instagram URL formats
+            // Extract shortcode from supported links
             val postId = when {
                 igLink.contains("www.instagram.com") -> {
                     val igLinkComponents: List<String> = igLink.split("/")
@@ -75,6 +74,7 @@ fun ItemDetailScreen(
 
                 else -> null
             }
+            // assebling embed urls
             when {
                 igLink.contains("www.instagram.com") -> {
                     postId?.let {
@@ -84,7 +84,7 @@ fun ItemDetailScreen(
 
                 igLink.contains("shorts") -> {
                     postId?.let {
-                        //"https://youtube.com/embed/$it"           // lepsza wersja, jeszcze nie wiem czemu ale nie działa
+                        //"https://youtube.com/embed/$it"           // better for embedding but bugs out in current configuration
                         "https://youtube.com/shorts/$it"
                     }
                 }
@@ -96,14 +96,7 @@ fun ItemDetailScreen(
         }
     }
 
-    if (isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
-    } else if (item != null) {
+    if (!isLoading && item != null) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -202,7 +195,6 @@ fun ItemDetailScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Recipe Image
             ElevatedCard(
                 elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
             ) {
@@ -218,7 +210,6 @@ fun ItemDetailScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Ingredients section
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
@@ -243,7 +234,6 @@ fun ItemDetailScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Recipe Steps section
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
@@ -268,7 +258,6 @@ fun ItemDetailScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Action buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -298,7 +287,7 @@ fun ItemDetailScreen(
             }
         }
     } else {
-        // Item not found
+        // fallback
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center

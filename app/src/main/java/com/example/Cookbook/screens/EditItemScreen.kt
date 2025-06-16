@@ -45,12 +45,10 @@ fun EditItemScreen(
     val isLoadingItem by viewModel.isLoadingItem
     val updateSuccess by viewModel.updateSuccess
 
-    // Load the item when screen opens
     LaunchedEffect(itemId) {
         viewModel.loadItem(itemId)
     }
 
-    // Navigate back on successful update
     LaunchedEffect(updateSuccess) {
         if (updateSuccess) {
             viewModel.resetUpdateSuccess()
@@ -63,7 +61,7 @@ fun EditItemScreen(
     ) { uri: Uri? ->
         uri?.let {
             try {
-                // Take persistent permission for the URI
+                // get uri permission
                 context.contentResolver.takePersistableUriPermission(
                     it,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -77,21 +75,13 @@ fun EditItemScreen(
         }
     }
 
-    if (isLoadingItem) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
-    } else {
+    if (!isLoadingItem) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Top bar with back button
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -115,7 +105,6 @@ fun EditItemScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Recipe Name
             OutlinedTextField(
                 value = recipeName,
                 onValueChange = { viewModel.updateRecipeName(it) },
@@ -126,19 +115,17 @@ fun EditItemScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Instagram Link (optional)
             OutlinedTextField(
                 value = igLink,
                 onValueChange = { viewModel.updateIgLink(it) },
                 label = { Text("Instagram Link (optional)") },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !isLoading,
-                placeholder = { Text("https://instagram.com/p/...") }
+                enabled = !isLoading
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Current image preview
+            // preview image
             imageUri?.let { uri ->
                 ElevatedCard(
                     elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
@@ -188,7 +175,6 @@ fun EditItemScreen(
                 enabled = !isLoading,
                 minLines = 4,
                 maxLines = 8,
-                placeholder = { Text("Step-by-step instructions...") }
             )
 
             Spacer(modifier = Modifier.height(24.dp))

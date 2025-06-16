@@ -37,7 +37,6 @@ class ItemsListViewModel(private val repository: ItemRepository) : ViewModel() {
                 _items.value = itemsList
                 applySearchFilter()
             } catch (e: Exception) {
-                // Handle error if needed
                 _allItems.value = emptyList()
                 _items.value = emptyList()
                 _filteredItems.value = emptyList()

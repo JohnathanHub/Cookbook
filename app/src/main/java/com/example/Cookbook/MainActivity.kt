@@ -1,7 +1,6 @@
 package com.example.Cookbook
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
@@ -21,14 +20,6 @@ import com.example.Cookbook.screens.EditItemScreen
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val extras = intent.extras
-
-        if (extras != null) {
-            for (key in extras.keySet()) {
-                val value = extras.get(key)
-                Log.d("IntentExtra", "$key: $value ($value?.javaClass)")
-            }
-        }
         setContent {
             CookbookTheme {
                 MainScreen()
@@ -90,7 +81,7 @@ fun MainScreen() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Determine if we should show the bottom navigation
+    // navbar setup (only screens additem/itemslist)
     val shouldShowBottomNav = bottomNavScreens.any { screen ->
         currentRoute == screen.route
     }

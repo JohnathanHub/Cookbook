@@ -56,7 +56,7 @@ fun AddItemScreen() {
         }
     )
 
-    // MediaPlayer for custom sound
+    // MediaPlayer for duolingo sound
     val mediaPlayer: MediaPlayer? = remember {
         try {
             MediaPlayer.create(context, R.raw.duolingo_correct)
@@ -78,37 +78,28 @@ fun AddItemScreen() {
     ) { uri: Uri? ->
         uri?.let {
             try {
-                // Take persistent permission for the URI
+                // uri permision
                 context.contentResolver.takePersistableUriPermission(
                     it,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
                 viewModel.updateImageUri(it)
-                Log.d("AddItemScreen", "Persistent permission taken for URI: $it")
             } catch (e: SecurityException) {
-                // Some content providers don't support persistent permissions
-                // In this case, you might want to copy the image to internal storage
-                Log.w("AddItemScreen", "Could not take persistent permission for URI: $it", e)
-                viewModel.updateImageUri(it) // Still set the URI, but it may not persist
+                viewModel.updateImageUri(it)
             }
         }
     }
 
-    // Show success message and reset
+    // Silliness cental (plays animation + sound)
     LaunchedEffect(addItemSuccess) {
         if (addItemSuccess) {
-            try {
-                mediaPlayer?.let { player ->
-                    if (player.isPlaying) {
-                        player.stop()
-                        player.prepare()
-                    }
-                    player.start()
+            mediaPlayer?.let { player ->
+                if (player.isPlaying) {
+                    player.stop()
+                    player.prepare()
                 }
-            } catch (e: Exception) {
-                Log.e("AddItemScreen", "Error playing sound", e)
+                player.start()
             }
-
             isAnimating = true
             viewModel.resetAddItemSuccess()
         }
@@ -126,7 +117,6 @@ fun AddItemScreen() {
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Recipe Name
         OutlinedTextField(
             value = recipeName,
             onValueChange = { viewModel.updateRecipeName(it) },
@@ -137,7 +127,6 @@ fun AddItemScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Instagram Link (optional)
         OutlinedTextField(
             value = igLink,
             onValueChange = { viewModel.updateIgLink(it) },
@@ -148,7 +137,6 @@ fun AddItemScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Image picker
         Button(onClick = { launcher.launch("image/*") }) {
             Text("Pick Recipe Image *")
         }
@@ -163,7 +151,6 @@ fun AddItemScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Recipe Ingredients
         OutlinedTextField(
             value = recipeIngredients,
             onValueChange = { viewModel.updateRecipeIngredients(it) },
@@ -177,7 +164,6 @@ fun AddItemScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Recipe Steps
         OutlinedTextField(
             value = recipeSteps,
             onValueChange = { viewModel.updateRecipeSteps(it) },
